@@ -64,7 +64,7 @@ def callback():
 def handle_image_message(event):
     get_request_user_id = event.source.user_id
     print('get_request_user_id', get_request_user_id)
-    if get_request_user_id in auth_user_aws_list:
+    if get_request_user_id in auth_user_ai_list:
         # 設定AWS Rekognition客戶端
         try:
             rekognition_client = boto3.client(
