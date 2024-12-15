@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 app = Flask(__name__)
-line_bot_api_key = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN')
-line_bot_secret_key = os.environ.get('LINE_CHANNEL_SECRET_KEY')
-aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
-aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+line_bot_api_key = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', '')
+line_bot_secret_key = os.environ.get('LINE_CHANNEL_SECRET_KEY', '')
+aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID', '')
+aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
 
 # Channel Access Token
 line_bot_api = LineBotApi(line_bot_api_key)
@@ -23,23 +23,23 @@ line_bot_api = LineBotApi(line_bot_api_key)
 handler = WebhookHandler(line_bot_secret_key)
 
 # Open AI key
-openai_api_key = os.environ.get('OPEN_AI_KEY')
+openai_api_key = os.environ.get('OPEN_AI_KEY', '')
 
 # U5583a266be8eb6b47ad9fa7d96846c80
 # Auth User list
-auth_user_list = os.environ.get('AUTH_USER_LIST')  # string
+auth_user_list = os.environ.get('AUTH_USER_LIST', '')  # string
 auth_user_list = auth_user_list.split(',')  #list
 print('auth_user_list', auth_user_list)
 
 # U5583a266be8eb6b47ad9fa7d96846c80
 # Auth AI User list
-auth_user_ai_list = os.environ.get('AUTH_AI_USER_LIST')  # string
+auth_user_ai_list = os.environ.get('AUTH_AI_USER_LIST', '')  # string
 auth_user_ai_list = auth_user_ai_list.split(',')  #list
 print('auth_user_ai_list', auth_user_ai_list)
 
 # U5583a266be8eb6b47ad9fa7d96846c80
 # Auth AWS User list
-auth_user_aws_list = os.environ.get('AUTH_AWS_USER_LIST')  # string
+auth_user_aws_list = os.environ.get('AUTH_AWS_USER_LIST', '')  # string
 auth_user_aws_list = auth_user_aws_list.split(',')  #list
 print('auth_user_aws_list', auth_user_aws_list)
 
@@ -127,15 +127,18 @@ def handle_message(event):
                 message = TextSendMessage(text="User not found")
                 line_bot_api.reply_message(event.reply_token, message)
             else:
-                ts.gen_chart(tw_time_list, bpm_list)
-                ts.update_photo_size()
-                chart_link, pre_chart_link = ts.upload_to_imgur()
-                print("圖片網址", chart_link)
-                print("縮圖網址", pre_chart_link)
-                image_message = ImageSendMessage(
-                    original_content_url=chart_link,
-                    preview_image_url=pre_chart_link)
-                line_bot_api.reply_message(event.reply_token, image_message)
+                try:
+                    ts.gen_chart(tw_time_list, bpm_list)
+                    ts.update_photo_size()
+                    chart_link, pre_chart_link = ts.upload_to_imgur()
+                    print("圖片網址", chart_link)
+                    print("縮圖網址", pre_chart_link)
+                    image_message = ImageSendMessage(
+                        original_content_url=chart_link,
+                        preview_image_url=pre_chart_link)
+                    line_bot_api.reply_message(event.reply_token, image_message)
+                except Exception as e:
+                    print(str(e))
         elif check == 'ai:' and get_request_user_id in auth_user_ai_list:
             try:
                 client = OpenAI(api_key=openai_api_key)
