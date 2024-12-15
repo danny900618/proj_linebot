@@ -63,25 +63,29 @@ class Thingspeak():
 
     # 上傳圖片到 Imgur
     def upload_to_imgur(self):
-        # CLIENT_ID = os.environ.get('IMGUR_CLIENT_ID')
-        CLIENT_ID = '1057e1ccf4ca17c'
-        PATH = "chart.jpg" #A Filepath to an image on your computer"
-        title = "Uploaded with PyImgur"
+        try:
+            CLIENT_ID = os.environ.get('IMGUR_CLIENT_ID')
+            PATH = "chart.jpg" #A Filepath to an image on your computer"
+            title = "Uploaded with PyImgur"
 
-        im = pyimgur.Imgur(CLIENT_ID)
-        uploaded_image = im.upload_image(PATH, title=title)
-        print("uploaded_image", uploaded_image)
-        print("uploaded_image link", str(uploaded_image.link))
-        print("type uploaded_image link", type(uploaded_image.link))
-        image_url = uploaded_image.link
+            im = pyimgur.Imgur(CLIENT_ID)
+            uploaded_image = im.upload_image(PATH, title=title)
+            print("uploaded_image", uploaded_image)
+            print("uploaded_image link", str(uploaded_image.link))
+            print("type uploaded_image link", type(uploaded_image.link))
+            image_url = uploaded_image.link
 
-        PATH = "pre_chart.jpg" #A Filepath to an image on your computer"
-        title = "Uploaded with pre_PyImgur"
+            PATH = "pre_chart.jpg" #A Filepath to an image on your computer"
+            title = "Uploaded with pre_PyImgur"
 
-        pre_im = pyimgur.Imgur(CLIENT_ID)
-        uploaded_pre_image = pre_im.upload_image(PATH, title=title)
-        pre_image_url = uploaded_pre_image.link
-        return  image_url, pre_image_url
+            pre_im = pyimgur.Imgur(CLIENT_ID)
+            uploaded_pre_image = pre_im.upload_image(PATH, title=title)
+            pre_image_url = uploaded_pre_image.link
+            return  image_url, pre_image_url
+        except Exception as e:
+            print(str(e))
+            return "", ""
+            
 
         
 if __name__ == "__main__":
