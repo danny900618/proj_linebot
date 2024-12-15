@@ -66,10 +66,14 @@ class Thingspeak():
         try:
             CLIENT_ID = os.environ.get('IMGUR_CLIENT_ID')
             print("CLIENT_ID", CLIENT_ID)
-            print("type CLIENT_ID", type(CLIENT_ID))
             PATH = "chart.jpg" #A Filepath to an image on your computer"
             title = "Uploaded with PyImgur"
-
+            # 檢查檔案是否存在
+            if os.path.exists(PATH):
+                print(f"檔案存在：{PATH}")
+            else:
+                print(f"檔案不存在：{PATH}")
+                
             im = pyimgur.Imgur(CLIENT_ID)
             uploaded_image = im.upload_image(PATH, title=title)
             print("uploaded_image", uploaded_image)
