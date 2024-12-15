@@ -64,30 +64,36 @@ class Thingspeak():
     # 上傳圖片到 Imgur
     def upload_to_imgur(self):
         try:
-            CLIENT_ID = os.environ.get('IMGUR_CLIENT_ID')
-            print("CLIENT_ID", CLIENT_ID)
-            PATH = "chart.jpg" #A Filepath to an image on your computer"
-            title = "Uploaded with PyImgur"
-            # 檢查檔案是否存在
-            if os.path.exists(PATH):
-                print(f"檔案存在：{PATH}")
-            else:
-                print(f"檔案不存在：{PATH}")
-                
-            im = pyimgur.Imgur(CLIENT_ID)
-            uploaded_image = im.upload_image(PATH, title=title)
-            print("uploaded_image", uploaded_image)
-            print("uploaded_image link", str(uploaded_image.link))
-            print("type uploaded_image link", type(uploaded_image.link))
-            image_url = uploaded_image.link
-
-            PATH = "pre_chart.jpg" #A Filepath to an image on your computer"
-            title = "Uploaded with pre_PyImgur"
-
-            pre_im = pyimgur.Imgur(CLIENT_ID)
-            uploaded_pre_image = pre_im.upload_image(PATH, title=title)
-            pre_image_url = uploaded_pre_image.link
-            return  image_url, pre_image_url
+            result_dict = dict()
+            for path_name in ['chart', 'pre_chart']:
+                CLIENT_ID = os.environ.get('IMGUR_CLIENT_ID')
+                print("CLIENT_ID", CLIENT_ID)
+                PATH = f"{path_name}.jpg" #A Filepath to an image on your computer"
+                title = "Uploaded with PyImgur"
+                # 檢查檔案是否存在
+                if os.path.exists(PATH):
+                    print(f"檔案存在：{PATH}")
+                else:
+                    print(f"檔案不存在：{PATH}")
+                headers = {"Authorization": f"Client-ID {CLIENT_ID}"}
+                with open(PATH, "rb") as file:
+                    response = requests.post(
+                        "https://api.imgur.com/3/image",
+                        headers=headers,
+                        files={"image": file}
+                    )
+                if response.status_code == 200:
+                    print("上傳成功！")
+                    data = response.json()["data"]
+                    result_dict[path_name] = data['link']
+                    print(f"圖片網址: {data['link']}")
+                    
+                else:
+                    print("上傳失敗！")
+                    print(f"狀態碼: {response.status_code}")
+                    print(f"回應內容: {response.text}")
+                    response.raise_for_status()
+            return result_dict
         except Exception as e:
             # 捕获错误并打印详细信息
             print(f"Error during upload: {str(e)}")
@@ -99,6 +105,8 @@ class Thingspeak():
 
         
 if __name__ == "__main__":
+    # imgur client id 教學
+    # https://stark920.github.io/2022/05/06/APIimgur/
     ts = Thingspeak()
     # tw_time_list, bpm_list=ts.get_data_from_thingspeak("2374700","2KNDBSF9FN4M5EY1")
     # ts.gen_chart(tw_time_list, bpm_list)
@@ -106,3 +114,5 @@ if __name__ == "__main__":
     # ts.upload_to_imgur()
     res = ts.upload_to_imgur()
     print(res)
+    # imgur secret
+    # 19c0e4023f080f0d881a140e4a407bfb156f00fe
