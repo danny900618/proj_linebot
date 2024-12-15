@@ -65,6 +65,8 @@ class Thingspeak():
     def upload_to_imgur(self):
         try:
             CLIENT_ID = os.environ.get('IMGUR_CLIENT_ID')
+            print("CLIENT_ID", CLIENT_ID)
+            print("type CLIENT_ID", type(CLIENT_ID))
             PATH = "chart.jpg" #A Filepath to an image on your computer"
             title = "Uploaded with PyImgur"
 
@@ -83,16 +85,20 @@ class Thingspeak():
             pre_image_url = uploaded_pre_image.link
             return  image_url, pre_image_url
         except Exception as e:
-            print(str(e))
-            return "", ""
+            # 捕获错误并打印详细信息
+            print(f"Error during upload: {str(e)}")
+            response = getattr(e, 'response', None)
+            if response:
+                print(f"Response Text: {response.text}")
+            raise
             
 
         
 if __name__ == "__main__":
     ts = Thingspeak()
-    tw_time_list, bpm_list=ts.get_data_from_thingspeak("2374700","2KNDBSF9FN4M5EY1")
-    ts.gen_chart(tw_time_list, bpm_list)
-    ts.update_photo_size()
+    # tw_time_list, bpm_list=ts.get_data_from_thingspeak("2374700","2KNDBSF9FN4M5EY1")
+    # ts.gen_chart(tw_time_list, bpm_list)
+    # ts.update_photo_size()
     # ts.upload_to_imgur()
     res = ts.upload_to_imgur()
     print(res)
