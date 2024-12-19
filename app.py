@@ -130,9 +130,9 @@ def handle_message(event):
                 try:
                     ts.gen_chart(tw_time_list, bpm_list)
                     ts.update_photo_size()
-                    result_url = ts.upload_to_imgur()
-                    chart_link = result_url.get('chart')
-                    pre_chart_link = result_url.get('pre_chart')
+                    result_url = ts.upload_to_imgur_with_refresh()
+                    chart_link = result_url.get('chart', '')
+                    pre_chart_link = result_url.get('pre_chart', '')
                     print("圖片網址", chart_link)
                     print("縮圖網址", pre_chart_link)
                     image_message = ImageSendMessage(
